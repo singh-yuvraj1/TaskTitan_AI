@@ -1,0 +1,109 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg-color: #0B0F19;
+  --surface-color: #111827;
+  --card-color: #151C2E;
+  --border-color: rgba(255, 255, 255, 0.08);
+  --text-primary: #F8FAFC;
+  --text-secondary: #CBD5E1;
+  --text-muted: #94A3B8;
+  --shadow-color: rgba(0, 0, 0, 0.5);
+  --card-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.6);
+  --glow-shadow: 0 0 20px rgba(124, 58, 237, 0.15);
+}
+
+.light-theme {
+  --bg-color: #F8FAFC;
+  --surface-color: #FFFFFF;
+  --card-color: #FFFFFF;
+  --border-color: rgba(15, 23, 42, 0.08);
+  --text-primary: #0F172A;
+  --text-secondary: #334155;
+  --text-muted: #64748B;
+  --shadow-color: rgba(15, 23, 42, 0.05);
+  --card-shadow: 0 10px 30px -10px rgba(15, 23, 42, 0.08);
+  --glow-shadow: 0 0 20px rgba(124, 58, 237, 0.05);
+}
+
+@layer base {
+  body {
+    background-color: var(--bg-color);
+    color: var(--text-primary);
+    @apply antialiased transition-colors duration-300;
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  }
+
+  input, select, textarea {
+    @apply focus-visible:outline-none;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply tracking-tight font-bold text-white;
+    color: var(--text-primary);
+  }
+}
+
+html, body, #root {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  background-color: var(--bg-color);
+}
+
+/* Scrollbars - minimal Vercel / GitHub style */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.12);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.25);
+}
+
+/* Premium micro-interactions and utilities */
+.glass-effect {
+  background: var(--card-color);
+  border: 1px solid var(--border-color);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: var(--card-shadow);
+}
+
+.premium-card {
+  background: var(--card-color);
+  border: 1px solid var(--border-color);
+  border-radius: 24px;
+  box-shadow: var(--card-shadow);
+  @apply transition-all duration-300 ease-out hover:-translate-y-0.5;
+}
+
+.heading-tight {
+  letter-spacing: -0.025em;
+  line-height: 1.15;
+}
+
+.gradient-text-primary {
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-[#7C3AED] via-[#8B5CF6] to-[#06B6D4];
+}
+
+.gradient-text-secondary {
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-[#EC4899] to-[#8B5CF6];
+}
+
+.active-glow {
+  box-shadow: var(--glow-shadow);
+}
