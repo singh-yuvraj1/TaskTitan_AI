@@ -80,6 +80,31 @@ const createApp = () => {
     return apiLimiter(req, res, next);
   });
 
+  // ─── Root Route ─────────────────────────────────────────────────────────────
+  app.get('/', (req, res) => {
+    res.status(200).json({
+      success: true,
+      message: '🚀 TaskTitan-AI Backend is Live!',
+      data: {
+        api: '/api',
+        health: '/api/health'
+      },
+      errors: null
+    });
+  });
+
+  // ─── API Index ──────────────────────────────────────────────────────────────
+  app.get('/api', (req, res) => {
+    res.status(200).json({
+      success: true,
+      message: 'TaskTitan-AI API is running.',
+      data: {
+        health: '/api/health'
+      },
+      errors: null
+    });
+  });
+
   // ─── Health Check Endpoint ─────────────────────────────────────────────────
   app.get('/api/health', (req, res) => {
     const dbStatus = getConnectionStatus();
