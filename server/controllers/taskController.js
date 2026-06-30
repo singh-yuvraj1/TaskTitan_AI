@@ -2,6 +2,7 @@ import Task from '../models/Task.js';
 import CalendarEvent from '../models/CalendarEvent.js';
 import Notification from '../models/Notification.js';
 import Challenge from '../models/Challenge.js';
+import HeatmapContribution from '../src/models/HeatmapContribution.js';
 import { generateTaskDecomposition } from '../services/geminiService.js';
 import { awardXp, logActivityMetric } from '../services/xpEngine.js';
 import { calculateTaskRiskScore, triggerRescueEngine } from '../services/rescueEngine.js';
@@ -160,10 +161,21 @@ export const updateTask = async (req, res, next) => {
 
     // Trigger completions rewards
     if (task.completed && !wasCompleted) {
-      // Award 50 XP
+      // Award 50 XP (also triggers HeatmapContribution via centralized awardXp)
       await awardXp(req.user, 50, `Completed task: ${task.title}`);
-      
-      // Seed level up notifications
+
+      // Record task completion to HeatmapContribution using TODAY'S DATE (not deadline)
+      try {
+        const today = new Date().toISOString().split('T')[0];
+        await HeatmapContribution.upsertDay(userEmail, today, {
+          tasksCompleted: 1,
+          streakDay: req.user.streak || 0
+        });
+      } catch (hErr) {
+        console.error('[HEATMAP TASK UPDATE ERROR]:', hErr.message);
+      }
+
+      // Seed completion notification
       await Notification.create({
         id: `notif-goal-${Date.now()}`,
         userEmail,
@@ -175,7 +187,7 @@ export const updateTask = async (req, res, next) => {
         contextAware: false
       });
 
-      // Increment completed task count in daily metrics
+      // Increment completed task count in daily ActivityLog metrics
       await logActivityMetric(userEmail, 'task', 1);
 
       // Check weekly challenge (ch-2) for Rescue Mode complete
@@ -186,8 +198,9 @@ export const updateTask = async (req, res, next) => {
           rescueChallenge.completed = true;
           await rescueChallenge.save();
 
+          // Award rescue champion XP (also tracked via centralized xpEngine)
           await awardXp(req.user, 100, 'Completed Rescue Champion Challenge');
-          
+
           if (!req.user.badges.includes('Rescue Champion')) {
             req.user.badges.push('Rescue Champion');
             await req.user.save();

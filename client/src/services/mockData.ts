@@ -81,7 +81,7 @@ export const INITIAL_TASKS: Task[] = [
   },
   {
     id: 'task-4',
-    title: 'Design CodingNinja SQL & Schema Models',
+    title: 'Design TaskTitan-AI SQL & Schema Models',
     description: 'Draw database entity diagrams, outline state interfaces, and write down JSON schemas.',
     deadline: offsetDate(-1), // Due yesterday
     category: 'Backend',

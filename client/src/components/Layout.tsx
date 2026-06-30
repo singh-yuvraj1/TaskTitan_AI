@@ -16,7 +16,7 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
   const { 
     activeTab, setActiveTab, logout, notifications, addTask, 
     markNotificationsAsRead, level, rank, xp, tasks, theme, toggleTheme,
-    setCommandPaletteOpen, triggerAIReschedule
+    setCommandPaletteOpen, triggerAIReschedule, userName, userEmail
   } = useApp();
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -156,11 +156,11 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
         {/* Logo */}
         <div className="flex items-center gap-3 px-2 py-4 cursor-pointer" onClick={() => handleTabClick('dashboard')}>
           <div className="w-8 h-8 rounded-lg bg-background border border-glass-border flex items-center justify-center">
-            <span className="font-extrabold text-text-primary text-lg">🥷</span>
+            <span className="font-extrabold text-text-primary text-lg">⚡</span>
           </div>
           <div>
-            <h1 className="text-sm font-bold text-text-primary tracking-tight">CodingNinja</h1>
-            <p className="text-[9px] text-text-muted uppercase tracking-widest font-mono">Workspace OS</p>
+            <h1 className="text-sm font-bold text-text-primary tracking-tight">TaskTitan-AI</h1>
+            <p className="text-[9px] text-text-muted uppercase tracking-widest font-mono">AI Productivity OS</p>
           </div>
         </div>
 
@@ -168,9 +168,11 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
         <div className="mt-2 px-2 pb-4">
           <div className="p-3.5 bg-card border border-glass-border rounded-2xl shadow-sm">
             <div className="flex items-center gap-2.5 mb-2.5">
-              <div className="w-7 h-7 rounded-full bg-white/5 flex items-center justify-center text-xs font-semibold text-text-primary border border-glass-border">Y</div>
+              <div className="w-7 h-7 rounded-full bg-white/5 flex items-center justify-center text-xs font-semibold text-text-primary border border-glass-border">
+                {(userName || userEmail || 'N').charAt(0).toUpperCase()}
+              </div>
               <div>
-                <div className="text-xs font-bold text-text-primary">Yuvraj</div>
+                <div className="text-xs font-bold text-text-primary">{userName || userEmail.split('@')[0] || 'Ninja'}</div>
                 <div className="text-[10px] text-text-muted">{rank}</div>
               </div>
             </div>
@@ -228,8 +230,8 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
       {/* Mobile Top Header */}
       <header className="lg:hidden flex justify-between items-center bg-neutral-950 border-b border-neutral-850 px-4 py-3 fixed top-0 w-full z-40">
         <div className="flex items-center gap-2" onClick={() => handleTabClick('dashboard')}>
-          <span className="text-xl">🥷</span>
-          <span className="text-sm font-bold text-white">CodingNinja</span>
+          <span className="text-xl">⚡</span>
+          <span className="text-sm font-bold text-white">TaskTitan-AI</span>
         </div>
         <div className="flex items-center gap-2">
           <Button 
@@ -382,9 +384,9 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
               )}
             </div>
 
-            {/* Profile Circle */}
+            {/* Profile Circle — dynamic user initial */}
             <div className="w-8 h-8 rounded-full bg-white/5 border border-glass-border flex items-center justify-center text-xs font-bold text-text-primary hover:bg-white/10 transition-colors cursor-pointer">
-              Y
+              {(userName || userEmail || 'N').charAt(0).toUpperCase()}
             </div>
           </div>
         </div>

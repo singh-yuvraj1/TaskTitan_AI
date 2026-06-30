@@ -60,7 +60,7 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({ isOpen, onClos
     <Modal
       isOpen={isOpen}
       onClose={() => {}} // Force user to finish onboarding
-      title="Welcome to CodingNinja OS"
+      title="Welcome to TaskTitan-AI"
       description="Initialize your developer workspace and configure AI cognitive schedulers."
     >
       <div className="space-y-6 py-2">
@@ -98,7 +98,7 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({ isOpen, onClos
                 <h3 className="text-sm font-bold text-white">Create Sandbox Profile</h3>
               </div>
               <p className="text-xs text-white/50 leading-relaxed">
-                Welcome to CodingNinja Productivity OS. How should your AI Coach address you?
+                Welcome to TaskTitan-AI Productivity OS. How should your AI Coach address you?
               </p>
               <Input
                 label="Full Name"

@@ -4,8 +4,7 @@
  * Application setup lives in src/app.js.
  */
 
-import dotenv from 'dotenv';
-dotenv.config();
+import 'dotenv/config';
 
 import { validateEnv } from './src/config/env.js';
 import { connectDB } from './src/config/db.js';
@@ -34,7 +33,7 @@ const startServer = async () => {
     // 3. Start the HTTP server
     const server = app.listen(PORT, () => {
       logger.info(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`);
-      logger.info(`  CodingNinja API Server — ${NODE_ENV.toUpperCase()}`);
+      logger.info(`  TaskTitan-AI API Server — ${NODE_ENV.toUpperCase()}`);
       logger.info(`  Listening on: http://localhost:${PORT}`);
       logger.info(`  Health check: http://localhost:${PORT}/api/health`);
       logger.info(`  API index:    http://localhost:${PORT}/api`);

@@ -1,7 +1,6 @@
 import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
-
-const JWT_SECRET = process.env.JWT_SECRET || 'superninja_secret_key_1337';
+import { JWT_SECRET } from '../src/config/jwt.js';
 
 export const protect = async (req, res, next) => {
   let token = '';

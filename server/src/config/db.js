@@ -23,16 +23,10 @@ export const connectDB = async () => {
     return true;
   }
 
-  const uri = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/codingninja';
+  const primaryUri = process.env.MONGODB_URI;
+  const fallbackUri = 'mongodb://127.0.0.1:27017/codingninja';
 
-  try {
-    const conn = await mongoose.connect(uri, DB_OPTIONS);
-    isConnected = true;
-
-    logger.info(`[DB] MongoDB connected: ${conn.connection.host}`);
-    logger.info(`[DB] Database name: ${conn.connection.name}`);
-
-    // Connection event listeners
+  const setupEvents = () => {
     mongoose.connection.on('disconnected', () => {
       isConnected = false;
       logger.warn('[DB] MongoDB disconnected. Attempting to reconnect...');
@@ -47,11 +41,35 @@ export const connectDB = async () => {
       logger.error(`[DB] MongoDB connection error: ${err.message}`);
       isConnected = false;
     });
+  };
 
+  try {
+    const uri = primaryUri || fallbackUri;
+    logger.info(`[DB] Connecting to database: ${uri.split('@').pop()}`);
+    const conn = await mongoose.connect(uri, DB_OPTIONS);
+    isConnected = true;
+    logger.info(`[DB] MongoDB connected: ${conn.connection.host}`);
+    logger.info(`[DB] Database name: ${conn.connection.name}`);
+    setupEvents();
     return true;
   } catch (error) {
-    logger.error(`[DB] MongoDB connection failed: ${error.message}`);
-    process.exit(1);
+    logger.warn(`[DB] Primary database connection failed: ${error.message}`);
+    if (primaryUri && primaryUri !== fallbackUri) {
+      logger.info(`[DB] Attempting fallback to local database: ${fallbackUri}`);
+      try {
+        const conn = await mongoose.connect(fallbackUri, DB_OPTIONS);
+        isConnected = true;
+        logger.info(`[DB] MongoDB connected (fallback): ${conn.connection.host}`);
+        logger.info(`[DB] Database name (fallback): ${conn.connection.name}`);
+        setupEvents();
+        return true;
+      } catch (fallbackError) {
+        logger.error(`[DB] Fallback database connection failed: ${fallbackError.message}`);
+        process.exit(1);
+      }
+    } else {
+      process.exit(1);
+    }
   }
 };
 

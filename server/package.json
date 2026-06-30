@@ -1,5 +1,5 @@
 {
-  "name": "codingninja-server",
+  "name": "tasktitan-ai-server",
   "version": "1.0.0",
   "type": "module",
   "main": "server.js",
@@ -10,7 +10,7 @@
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
     "bcryptjs": "^3.0.3",
-    "codingninja-workspace": "file:..",
+    "tasktitan-ai-workspace": "file:..",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
@@ -20,6 +20,9 @@
     "jsonwebtoken": "^9.0.3",
     "mongoose": "^8.3.1",
     "morgan": "^1.10.0",
+    "nodemailer": "^9.0.3",
+    "passport": "^0.7.0",
+    "passport-google-oauth20": "^2.0.0",
     "zod": "^4.4.3"
   },
   "devDependencies": {

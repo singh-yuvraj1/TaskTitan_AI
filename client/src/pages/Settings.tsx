@@ -29,13 +29,13 @@ export const Settings: React.FC = () => {
       xp,
       streak,
       timestamp: new Date().toISOString(),
-      platform: 'CodingNinja OS'
+      platform: 'TaskTitan-AI'
     };
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = 'codingninja_profile.json';
+    link.download = 'tasktitan_profile.json';
     link.click();
   };
 

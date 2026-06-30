@@ -123,11 +123,10 @@ export const endFocusSession = async (req, res, next) => {
     const focusHours = parseFloat((durationMinutes / 60).toFixed(2));
     await logActivityMetric(userEmail, 'focus', focusHours);
 
-    // Update heatmap
+    // Update heatmap with focus-specific metrics (xpEarned is tracked centrally via awardXp)
     const today = new Date().toISOString().split('T')[0];
     await HeatmapContribution.upsertDay(userEmail, today, {
       focusMinutes: durationMinutes,
-      xpEarned: xpAwarded,
       sessionsCount: 1,
       streakDay: req.user.streak || 0
     });

@@ -1,6 +1,7 @@
 import User from '../models/User.js';
 import ActivityLog from '../models/ActivityLog.js';
 import Notification from '../models/Notification.js';
+import HeatmapContribution from '../src/models/HeatmapContribution.js';
 
 // Helper to log user's daily metrics
 export const logActivityMetric = async (email, type, amount) => {
@@ -55,14 +56,14 @@ export const updateStreak = (user) => {
   user.streakUpdatedDate = todayStr;
 };
 
-// Main XP Award Engine
+// Main XP Award Engine — centralized source of truth for contribution tracking
 export const awardXp = async (user, amount, reason) => {
   const userEmail = user.email.toLowerCase().trim();
   const oldLevel = user.level;
 
   try {
     user.xp += amount;
-    
+
     // Level formula: level = Math.floor(xp / 300) + 1
     const newLevel = Math.floor(user.xp / 300) + 1;
     user.level = newLevel;
@@ -80,8 +81,22 @@ export const awardXp = async (user, amount, reason) => {
 
     await user.save();
 
-    // Log the XP metric for charts/heatmap
+    // Log the XP metric for ActivityLog (charts/analytics)
     await logActivityMetric(userEmail, 'xp', amount);
+
+    // ── Update HeatmapContribution with XP earned today ────────────────────
+    // This is the single source of truth for XP contribution tracking.
+    // All actions that award XP (tasks, focus, roadmaps, rescue, challenges)
+    // flow through here automatically.
+    try {
+      const today = new Date().toISOString().split('T')[0];
+      await HeatmapContribution.upsertDay(userEmail, today, {
+        xpEarned: amount,
+        streakDay: user.streak || 0
+      });
+    } catch (heatmapErr) {
+      console.error('[HEATMAP XP UPDATE ERROR]:', heatmapErr.message);
+    }
 
     // If leveled up, trigger notification!
     if (newLevel > oldLevel) {

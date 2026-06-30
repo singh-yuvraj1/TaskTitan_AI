@@ -83,7 +83,7 @@ export const generateTaskDecomposition = async (title, desc, deadline, customKey
   try {
     const genAI = new GoogleGenerativeAI(apiKey);
     const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
-    const prompt = `You are the CodingNinja AI Planner and Prioritizer Agent.
+    const prompt = `You are the TaskTitan-AI Planner and Prioritizer Agent.
     Decompose the following task into a list of 3 detailed subtasks, assign a category, priority level, and predict task failure risk.
     Task Title: "${title}"
     Task Description: "${desc}"
@@ -150,7 +150,7 @@ export const generateRescueTimeline = async (title, hoursRemaining, customKey) =
   try {
     const genAI = new GoogleGenerativeAI(apiKey);
     const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
-    const prompt = `You are the CodingNinja AI Rescue Agent.
+    const prompt = `You are the TaskTitan-AI Rescue Agent.
     Generate a highly tactical, minute-by-minute Emergency Rescue Plan to successfully complete this task.
     Task Title: "${title}"
     Hours remaining: ${hoursRemaining.toFixed(1)} hours
@@ -194,7 +194,7 @@ export const generateCoachFeedback = async (statusSummary, customKey) => {
   try {
     const genAI = new GoogleGenerativeAI(apiKey);
     const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
-    const prompt = `You are the CodingNinja AI Coach Agent.
+    const prompt = `You are the TaskTitan-AI Coach Agent.
     Review the user's statistics summary below and provide a concise (max 2 sentences), highly motivational advice.
     Address them as "Ninja" or similar developer terms.
     User Stats: ${statusSummary}`;
@@ -264,7 +264,7 @@ export const processVoiceCommand = async (transcript, customKey) => {
   try {
     const genAI = new GoogleGenerativeAI(apiKey);
     const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
-    const prompt = `You are the CodingNinja Voice Assistant.
+    const prompt = `You are the TaskTitan-AI Voice Assistant.
     Understand the user speech query and return a command action.
     User speech: "${transcript}"
     Current Date/Time: ${new Date().toISOString()}

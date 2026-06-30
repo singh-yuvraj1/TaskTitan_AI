@@ -67,6 +67,15 @@ const userSchema = new mongoose.Schema({
     email: { type: Boolean, default: true },
     push: { type: Boolean, default: true },
     rescueAlerts: { type: Boolean, default: true }
+  },
+  // Password Reset Token Fields
+  resetPasswordToken: {
+    type: String,
+    default: null
+  },
+  resetPasswordExpire: {
+    type: Date,
+    default: null
   }
 }, { timestamps: true });
 

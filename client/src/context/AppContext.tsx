@@ -105,6 +105,7 @@ interface AppContextType {
   activityHistory: Record<string, ActivityHistoryEntry>;
   analytics: AnalyticsData | null;
   fetchAnalytics: () => Promise<void>;
+  fetchUserState: () => Promise<void>;
 
   addTask: (title: string, description: string, deadline: string) => Promise<void>;
   updateTask: (task: Task) => void;
@@ -319,6 +320,19 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       }
     };
     verifySession();
+
+    // Parse URL query parameters for tab switching or error displaying
+    const params = new URLSearchParams(window.location.search);
+    const tabParam = params.get('tab');
+    const errorParam = params.get('error');
+    if (tabParam) {
+      setActiveTab(tabParam);
+    }
+    if (errorParam) {
+      showToast(decodeURIComponent(errorParam), 'error');
+      // Clean query parameter from URL to prevent showing the error again on refresh
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
   }, []);
 
   // Update task risk scores dynamically when parameters change
@@ -409,7 +423,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         if (data.data?.user?.name) setUserName(data.data.user.name);
         setActiveTab('dashboard');
         showToast('Login successful! Welcome back.', 'success');
-        addNotification('Welcome Back!', 'Login successful. CodingNinja Productivity OS active.', 'coach');
+        addNotification('Welcome Back!', 'Login successful. TaskTitan-AI Productivity OS active.', 'coach');
         await fetchUserState();
         return true;
       } else {
@@ -1016,6 +1030,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       activityHistory,
       analytics,
       fetchAnalytics,
+      fetchUserState,
       addTask,
       updateTask,
       deleteTask,

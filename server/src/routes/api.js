@@ -48,7 +48,7 @@ router.use('/roadmap', roadmapRoutes);
 router.get('/', (req, res) => {
   res.json({
     success: true,
-    message: 'CodingNinja Production API — v1',
+    message: 'TaskTitan-AI Production API — v1',
     data: {
       endpoints: {
         auth: [

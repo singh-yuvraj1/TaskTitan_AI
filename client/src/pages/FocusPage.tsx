@@ -3,8 +3,8 @@ import { useApp } from '../context/AppContext';
 import { Card, CardContent } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { Badge } from '../components/ui/Badge';
-import { 
-  Play, Pause, RotateCcw, ShieldAlert, Sparkles, 
+import {
+  Play, Pause, RotateCcw, ShieldAlert, Sparkles,
   Coffee, Zap, AlertTriangle, CheckCircle2, TrendingUp
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
@@ -12,7 +12,7 @@ import confetti from 'canvas-confetti';
 const API_BASE = 'http://localhost:5000/api';
 
 export const FocusPage: React.FC = () => {
-  const { focusHours, setFocusHours, addNotification, addXp } = useApp();
+  const { focusHours, setFocusHours, addNotification, addXp, fetchUserState } = useApp();
 
   // Timer Configuration (In Seconds)
   const [timeLeft, setTimeLeft] = useState(25 * 60);
@@ -136,7 +136,7 @@ export const FocusPage: React.FC = () => {
     try {
       const body: any = { completed: wasCompleted };
       if (activeSessionIdRef.current) body.sessionId = activeSessionIdRef.current;
-      
+
       await fetch(`${API_BASE}/focus/end`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -157,7 +157,7 @@ export const FocusPage: React.FC = () => {
       const addedHours = Number((durationPreset / 60).toFixed(2));
       setFocusHours(prev => Number((prev + addedHours).toFixed(1)));
       setCompletedSessions(prev => prev + 1);
-      
+
       // Award XP locally (also happens server-side via /api/focus/end)
       addXp(30, `Conquered Pomodoro Focus Block (${durationPreset}m)`);
       addNotification(
@@ -166,8 +166,9 @@ export const FocusPage: React.FC = () => {
         'gamification'
       );
 
-      // Sync session end to backend
+      // Sync session end to backend, then refresh state (updates heatmap)
       await endSession(true);
+      await fetchUserState();
 
       confetti({
         particleCount: 100,
@@ -226,7 +227,7 @@ export const FocusPage: React.FC = () => {
 
   return (
     <div className="max-w-5xl mx-auto py-2 space-y-6">
-      
+
       {/* Header */}
       <div className="pb-4 border-b border-neutral-900">
         <h2 className="text-xl font-bold text-white tracking-tight">Focus Chamber</h2>
@@ -234,7 +235,7 @@ export const FocusPage: React.FC = () => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        
+
         {/* Timer Control Card (Left / 7 cols) */}
         <div className="lg:col-span-7">
           <Card className="bg-neutral-950/20 border-neutral-850 p-8 flex flex-col items-center justify-center text-center relative overflow-hidden min-h-[380px]">
@@ -260,43 +261,39 @@ export const FocusPage: React.FC = () => {
 
             {/* Presets Row */}
             <div className="flex flex-wrap gap-2 justify-center mb-8">
-              <button 
+              <button
                 onClick={() => handlePresetSelect(25, 'focus')}
-                className={`px-3 py-1.5 rounded-lg text-[10px] font-mono border transition-all ${
-                  durationPreset === 25 && activeSessionType === 'focus'
-                    ? 'bg-neutral-900 border-neutral-700 text-white'
-                    : 'bg-transparent border-neutral-900 text-neutral-500 hover:text-neutral-300'
-                }`}
+                className={`px-3 py-1.5 rounded-lg text-[10px] font-mono border transition-all ${durationPreset === 25 && activeSessionType === 'focus'
+                  ? 'bg-neutral-900 border-neutral-700 text-white'
+                  : 'bg-transparent border-neutral-900 text-neutral-500 hover:text-neutral-300'
+                  }`}
               >
                 25m Focus
               </button>
-              <button 
+              <button
                 onClick={() => handlePresetSelect(50, 'focus')}
-                className={`px-3 py-1.5 rounded-lg text-[10px] font-mono border transition-all ${
-                  durationPreset === 50 && activeSessionType === 'focus'
-                    ? 'bg-neutral-900 border-neutral-700 text-white'
-                    : 'bg-transparent border-neutral-900 text-neutral-500 hover:text-neutral-300'
-                }`}
+                className={`px-3 py-1.5 rounded-lg text-[10px] font-mono border transition-all ${durationPreset === 50 && activeSessionType === 'focus'
+                  ? 'bg-neutral-900 border-neutral-700 text-white'
+                  : 'bg-transparent border-neutral-900 text-neutral-500 hover:text-neutral-300'
+                  }`}
               >
                 50m Focus
               </button>
-              <button 
+              <button
                 onClick={() => handlePresetSelect(5, 'break')}
-                className={`px-3 py-1.5 rounded-lg text-[10px] font-mono border transition-all ${
-                  durationPreset === 5 && activeSessionType === 'break'
-                    ? 'bg-neutral-900 border-neutral-700 text-white'
-                    : 'bg-transparent border-neutral-900 text-neutral-500 hover:text-neutral-300'
-                }`}
+                className={`px-3 py-1.5 rounded-lg text-[10px] font-mono border transition-all ${durationPreset === 5 && activeSessionType === 'break'
+                  ? 'bg-neutral-900 border-neutral-700 text-white'
+                  : 'bg-transparent border-neutral-900 text-neutral-500 hover:text-neutral-300'
+                  }`}
               >
                 5m Break
               </button>
-              <button 
+              <button
                 onClick={() => handlePresetSelect(15, 'break')}
-                className={`px-3 py-1.5 rounded-lg text-[10px] font-mono border transition-all ${
-                  durationPreset === 15 && activeSessionType === 'break'
-                    ? 'bg-neutral-900 border-neutral-700 text-white'
-                    : 'bg-transparent border-neutral-900 text-neutral-500 hover:text-neutral-300'
-                }`}
+                className={`px-3 py-1.5 rounded-lg text-[10px] font-mono border transition-all ${durationPreset === 15 && activeSessionType === 'break'
+                  ? 'bg-neutral-900 border-neutral-700 text-white'
+                  : 'bg-transparent border-neutral-900 text-neutral-500 hover:text-neutral-300'
+                  }`}
               >
                 15m Break
               </button>
@@ -304,17 +301,17 @@ export const FocusPage: React.FC = () => {
 
             {/* Controls */}
             <div className="flex gap-3">
-              <Button 
-                variant="primary" 
-                size="lg" 
+              <Button
+                variant="primary"
+                size="lg"
                 onClick={toggleTimer}
                 leftIcon={isRunning ? <Pause size={14} /> : <Play size={14} />}
               >
                 {isRunning ? 'Pause Block' : 'Start Focus'}
               </Button>
-              <Button 
-                variant="outline" 
-                size="lg" 
+              <Button
+                variant="outline"
+                size="lg"
                 onClick={resetTimer}
                 leftIcon={<RotateCcw size={14} />}
               >
@@ -351,9 +348,8 @@ export const FocusPage: React.FC = () => {
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-neutral-500">Focus Efficiency:</span>
-                  <span className={`font-semibold ${
-                    focusEfficiency > 80 ? 'text-emerald-400' : focusEfficiency > 50 ? 'text-amber-400' : 'text-rose-400'
-                  }`}>
+                  <span className={`font-semibold ${focusEfficiency > 80 ? 'text-emerald-400' : focusEfficiency > 50 ? 'text-amber-400' : 'text-rose-400'
+                    }`}>
                     {focusEfficiency}%
                   </span>
                 </div>

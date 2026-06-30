@@ -5,6 +5,7 @@ import SkillNode from '../models/SkillNode.js';
 import CalendarEvent from '../models/CalendarEvent.js';
 import Notification from '../models/Notification.js';
 import ActivityLog from '../models/ActivityLog.js';
+import HeatmapContribution from '../src/models/HeatmapContribution.js';
 
 // Default mock templates
 const DEFAULT_TASKS = [
@@ -192,4 +193,34 @@ export const seedUserData = async (email) => {
     });
   }
   await ActivityLog.insertMany(seededLogs);
+
+  // Seed 14 days of HeatmapContribution data for initial contribution grid population
+  const heatmapSeeds = [];
+  for (let i = 14; i >= 0; i--) {
+    const xpVal = Math.round(30 + Math.random() * 150);
+    const focusMin = Math.round((1 + Math.random() * 3.5) * 60);
+    const tasksDone = Math.random() > 0.5 ? 1 : 0;
+    const score = (tasksDone * 30) + (focusMin * 0.5) + (xpVal * 0.2);
+    let intensity = 0;
+    if (score > 0 && score < 30) intensity = 1;
+    else if (score < 80) intensity = 2;
+    else if (score < 150) intensity = 3;
+    else intensity = 4;
+
+    heatmapSeeds.push({
+      userEmail,
+      date: getPastDateStr(i),
+      xpEarned: xpVal,
+      focusMinutes: focusMin,
+      tasksCompleted: tasksDone,
+      sessionsCount: Math.random() > 0.4 ? 1 : 0,
+      intensity
+    });
+  }
+
+  try {
+    await HeatmapContribution.insertMany(heatmapSeeds, { ordered: false });
+  } catch (dupErr) {
+    // Ignore duplicate key errors from re-seeds
+  }
 };

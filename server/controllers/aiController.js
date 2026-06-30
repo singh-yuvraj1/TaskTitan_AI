@@ -156,7 +156,7 @@ export const runAICommand = async (req, res, next) => {
       try {
         const genAI = new GoogleGenerativeAI(apiKey);
         const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
-        const prompt = `You are the CodingNinja AI Command Center.
+        const prompt = `You are the TaskTitan-AI Command Center.
         Parse the user natural language command and schedule tasks/events for them.
         User Command: "${command}"
         Current date/time is ${new Date().toISOString()}.

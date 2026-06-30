@@ -22,7 +22,7 @@ export const SkillTree: React.FC = () => {
         <div>
           <h2 className="text-xl font-bold text-white flex items-center gap-2">
             <GraduationCap className={activeCategory === 'DSA' ? 'text-neonCyan' : activeCategory === 'React' ? 'text-neonViolet' : 'text-neonEmerald'} />
-            <span>CodingNinja Academy & Skill Tree</span>
+            <span>TaskTitan-AI Academy & Skill Tree</span>
           </h2>
           <p className="text-xs text-white/50">Reach XP milestones to unlock passive skill nodes, boosting your stats and scheduling priorities (no XP is deducted).</p>
         </div>

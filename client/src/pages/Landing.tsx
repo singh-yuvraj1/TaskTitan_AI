@@ -116,9 +116,9 @@ export const Landing: React.FC = () => {
       {/* Navigation Header */}
       <header className="max-w-6xl mx-auto w-full px-6 py-6 flex justify-between items-center z-10 border-b border-neutral-900">
         <div className="flex items-center gap-2">
-          <span className="text-xl">🥷</span>
+          <span className="text-xl">⚡</span>
           <span className="text-sm font-bold text-white tracking-tight">
-            Coding<span className="text-neutral-400">Ninja</span>
+            TaskTitan<span className="text-neutral-400">-AI</span>
           </span>
         </div>
         <div className="flex items-center gap-3">
@@ -151,7 +151,7 @@ export const Landing: React.FC = () => {
               Never miss a<br />deadline again.
             </h1>
             <p className="text-base text-neutral-400 leading-relaxed max-w-xl font-medium">
-              CodingNinja helps students and developers plan work, detect calendar risks, and recover automatically before deadlines are missed.
+              TaskTitan-AI helps students and developers plan work, detect calendar risks, and recover automatically before deadlines are missed.
             </p>
             <div className="flex flex-wrap gap-3 pt-2">
               <Button 
@@ -424,7 +424,7 @@ export const Landing: React.FC = () => {
               <div className="p-6 bg-neutral-950/40 border border-neutral-900 rounded-xl space-y-4">
                 <h4 className="font-semibold text-rose-400 flex items-center gap-1.5">
                   <X size={14} />
-                  <span>Without CodingNinja</span>
+                  <span>Without TaskTitan-AI</span>
                 </h4>
                 <ul className="space-y-2.5 text-neutral-500">
                   <li className="flex items-start gap-2">
@@ -445,7 +445,7 @@ export const Landing: React.FC = () => {
               <div className="p-6 bg-neutral-950/40 border border-neutral-900 rounded-xl space-y-4">
                 <h4 className="font-semibold text-emerald-400 flex items-center gap-1.5">
                   <CheckCircle2 size={14} />
-                  <span>With CodingNinja</span>
+                  <span>With TaskTitan-AI</span>
                 </h4>
                 <ul className="space-y-2.5 text-neutral-300">
                   <li className="flex items-start gap-2">
@@ -491,7 +491,7 @@ export const Landing: React.FC = () => {
       {/* Footer */}
       <footer className="border-t border-neutral-900 bg-neutral-950/50 z-10 py-8 px-6 text-xs text-neutral-500 text-center font-mono">
         <div className="max-w-6xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
-          <div>© {new Date().getFullYear()} CodingNinja Inc. All rights reserved.</div>
+          <div>© {new Date().getFullYear()} TaskTitan-AI. All rights reserved.</div>
           <div className="flex gap-4">
             <span className="hover:text-neutral-400 cursor-pointer">Security</span>
             <span className="hover:text-neutral-400 cursor-pointer">Privacy</span>

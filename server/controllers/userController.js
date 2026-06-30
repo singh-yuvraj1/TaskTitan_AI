@@ -6,6 +6,7 @@ import Challenge from '../models/Challenge.js';
 import CalendarEvent from '../models/CalendarEvent.js';
 import Notification from '../models/Notification.js';
 import ActivityLog from '../models/ActivityLog.js';
+import HeatmapContribution from '../src/models/HeatmapContribution.js';
 import { awardXp, logActivityMetric, updateStreak } from '../services/xpEngine.js';
 import { checkDeadlineNotifications } from '../services/notificationEngine.js';
 
@@ -218,25 +219,28 @@ export const getHeatmapData = async (req, res, next) => {
     startDate.setDate(startDate.getDate() - parseInt(days, 10));
     const startDateStr = startDate.toISOString().split('T')[0];
 
-    const logs = await ActivityLog.find({
+    // Use HeatmapContribution (today's-date based contributions) as primary source
+    const contributions = await HeatmapContribution.find({
       userEmail,
       date: { $gte: startDateStr }
     }).sort({ date: 1 });
 
     // Convert to { [YYYY-MM-DD]: { xpEarned, focusHours, tasksCompleted } } map
+    // focusMinutes is stored in HeatmapContribution — convert to hours for client compatibility
     const heatmapData = {};
-    logs.forEach(log => {
+    contributions.forEach(log => {
       heatmapData[log.date] = {
         xpEarned: log.xpEarned || 0,
-        focusHours: log.focusHours || 0,
-        tasksCompleted: log.tasksCompleted || 0
+        focusHours: parseFloat(((log.focusMinutes || 0) / 60).toFixed(2)),
+        tasksCompleted: log.tasksCompleted || 0,
+        intensity: log.intensity || 0
       };
     });
 
-    const totalXp = logs.reduce((acc, l) => acc + (l.xpEarned || 0), 0);
-    const totalFocusHours = logs.reduce((acc, l) => acc + (l.focusHours || 0), 0);
-    const totalTasksCompleted = logs.reduce((acc, l) => acc + (l.tasksCompleted || 0), 0);
-    const activeDays = logs.filter(l => l.xpEarned > 0 || l.focusHours > 0 || l.tasksCompleted > 0).length;
+    const totalXp = contributions.reduce((acc, l) => acc + (l.xpEarned || 0), 0);
+    const totalFocusMinutes = contributions.reduce((acc, l) => acc + (l.focusMinutes || 0), 0);
+    const totalTasksCompleted = contributions.reduce((acc, l) => acc + (l.tasksCompleted || 0), 0);
+    const activeDays = contributions.filter(l => l.intensity > 0).length;
 
     res.status(200).json({
       success: true,
@@ -245,7 +249,7 @@ export const getHeatmapData = async (req, res, next) => {
         heatmapData,
         summary: {
           totalXp,
-          totalFocusHours: parseFloat(totalFocusHours.toFixed(1)),
+          totalFocusHours: parseFloat((totalFocusMinutes / 60).toFixed(1)),
           totalTasksCompleted,
           activeDays,
           periodDays: parseInt(days, 10)

@@ -1,4 +1,5 @@
 import Roadmap from '../models/Roadmap.js';
+import HeatmapContribution from '../models/HeatmapContribution.js';
 import { awardXp } from '../../services/xpEngine.js';
 import Notification from '../../models/Notification.js';
 import logger from '../utils/logger.js';
@@ -126,11 +127,20 @@ export const updateRoadmap = async (req, res, next) => {
       roadmap.milestones = milestones;
     }
 
-    // Toggle single milestone by ID
+    // Track whether a specific milestone was newly toggled to completed
+    let milestoneWasJustCompleted = false;
+    let completedMilestoneTitle = '';
+
+    // Toggle single milestone by ID — capture pre-save state
     if (milestoneId !== undefined) {
       roadmap.milestones = roadmap.milestones.map(m => {
         if (m.id === milestoneId) {
+          const wasAlreadyDone = m.completed;
           const nextCompleted = milestoneCompleted !== undefined ? milestoneCompleted : !m.completed;
+          if (!wasAlreadyDone && nextCompleted) {
+            milestoneWasJustCompleted = true;
+            completedMilestoneTitle = m.title || 'Milestone';
+          }
           return {
             ...m.toObject(),
             completed: nextCompleted,
@@ -143,7 +153,7 @@ export const updateRoadmap = async (req, res, next) => {
 
     await roadmap.save(); // Pre-save hook recalculates progress
 
-    // If roadmap just completed, award XP + notification
+    // If roadmap just completed, award XP + notification (centralized awardXp handles heatmap XP)
     if (!wasCompleted && roadmap.completed) {
       await awardXp(req.user, roadmap.xpReward, `Completed roadmap: ${roadmap.title}`);
       await Notification.create({
@@ -157,6 +167,21 @@ export const updateRoadmap = async (req, res, next) => {
         contextAware: false
       });
       logger.debug(`[ROADMAP] Roadmap "${roadmap.title}" completed for ${userEmail}`);
+    }
+
+    // If a milestone was just completed (false → true), record contribution
+    if (milestoneWasJustCompleted && !roadmap.completed) {
+      // (Skip when roadmap itself just completed — that already calls awardXp above)
+      try {
+        const today = new Date().toISOString().split('T')[0];
+        await awardXp(req.user, 20, `Completed milestone: ${completedMilestoneTitle}`);
+        await HeatmapContribution.upsertDay(userEmail, today, {
+          tasksCompleted: 1,
+          streakDay: req.user.streak || 0
+        });
+      } catch (hErr) {
+        console.error('[HEATMAP MILESTONE ERROR]:', hErr.message);
+      }
     }
 
     res.status(200).json({
